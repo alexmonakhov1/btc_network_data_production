@@ -14,8 +14,8 @@ import os
 
 
 URL = 'https://api.blockchain.info/charts/'
-charts = ['hash-rate', 'miners-revenue', 'transaction-fees-usd', 'transaction-fees',
-          'n-transactions-per-block','difficulty']
+charts = ['market-price', 'difficulty', 'hash-rate', 'miners-revenue', 'transaction-fees-usd',
+          'transaction-fees', 'n-transactions', 'n-transactions-per-block']
 task_list = list()
 
 
@@ -24,7 +24,9 @@ with DAG(
     schedule='@daily',
     dag_id="btc_network_data",
     catchup=True,
-    start_date=datetime(2025, 12, 10),
+    start_date=datetime(2025, 10, 1),
+    end_date=datetime(2025, 10, 12),
+    max_active_runs=1,
     tags=["btc_network_data"]
 ):
     @task()
@@ -35,7 +37,7 @@ with DAG(
 
         print('start_unix_timestamp: ', start_unix_timestamp)
 
-        charts_value = []
+        charts_value = {}
 
         for chart in charts:
 
@@ -57,19 +59,36 @@ with DAG(
                     'https://www.googleapis.com/auth/drive'
                 ]
 
-                charts_value.append(value)
+                charts_value[f"{chart}"] = value
 
             else:
                 raise AirflowException(f"Failed to get {chart}. Status code: {response.status_code}")
 
-        creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
-        client = gspread.authorize(creds)
-
         print(charts_value)
 
+        final_data = []
+
+        for chart_key, chart_value in charts_value.items():
+            if chart_key == 'n-transactions':
+                    final_data.append(int(charts_value['transaction-fees-usd']) / int(charts_value['n-transactions']))
+            else:
+                final_data.append(chart_value)
+
+
+        creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
+        client = gspread.authorize(creds)
         sheet = client.open_by_key(spreadsheet_id).sheet1
 
-        charts_value.insert(0, date)
-        sheet.append_row(charts_value)
+        final_data.insert(0, date)
+        final_data.insert(4, charts_value["miners-revenue"] / charts_value["hash-rate"])
+        final_data.insert(9, round(charts_value["transaction-fees-usd"] /
+                          (charts_value["miners-revenue"] - charts_value["transaction-fees-usd"]) * 100, 2))
+        final_data.insert(10, round(charts_value["miners-revenue"] / charts_value["hash-rate"] * 1000))
+        final_data.insert(11, charts_value["transaction-fees-usd"] /
+                          (int(charts_value['transaction-fees-usd']) / int(charts_value['n-transactions'])))
+        final_data.insert(13, final_data[11] / charts_value["n-transactions-per-block"])
+        final_data.insert(14, final_data[4] / final_data[13])
+        final_data.insert(15, final_data[13]  * 10 / 144)
+        sheet.append_row(final_data)
 
     extract(URL,'1', '1')

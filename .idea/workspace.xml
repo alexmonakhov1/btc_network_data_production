@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="push docker-compose.yaml">
+    <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="get hard values and write to sheet">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dags/btc_network_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/dags/btc_network_data.py" afterDir="false" />
     </list>
@@ -98,13 +98,22 @@
       <option name="project" value="LOCAL" />
       <updated>1767370684035</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="get hard values and write to sheet">
+      <option name="closed" value="true" />
+      <created>1767372221590</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1767372221590</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
     <MESSAGE value="first draft" />
     <MESSAGE value="push docker-compose.yaml" />
-    <option name="LAST_COMMIT_MESSAGE" value="push docker-compose.yaml" />
+    <MESSAGE value="get hard values and write to sheet" />
+    <option name="LAST_COMMIT_MESSAGE" value="get hard values and write to sheet" />
   </component>
 </project>
