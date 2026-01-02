@@ -28,44 +28,48 @@ with DAG(
     tags=["btc_network_data"]
 ):
     @task()
-    def extract(url, chart, timespan, rolling_average, **kwargs):
-        data_interval_start = kwargs["data_interval_start"]
+    def extract(url, timespan, rolling_average, **kwargs):
         start_unix_timestamp = int(
-            (data_interval_start - timedelta(days=2)).timestamp()
+            (kwargs["data_interval_start"] - timedelta(days=2)).timestamp()
         )
 
         print('start_unix_timestamp: ', start_unix_timestamp)
-        print('data_interval_start: ', data_interval_start)
 
-        print('LINK: ', f"{url}{chart}?start={start_unix_timestamp}&timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
+        charts_value = []
 
-        response = requests.get(
-            f"{url}{chart}?start={start_unix_timestamp}&timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
+        for chart in charts:
 
-        if response.status_code == 200:
-            date = datetime.fromtimestamp(response.json()["values"][0]["x"]).date().isoformat()
-            value = round(response.json()["values"][0]["y"])
+            print('LINK: ', f"{url}{chart}?start={start_unix_timestamp}&timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
 
-            credentials_path = '/opt/airflow/creds/btc-network-data-production-6d9e3665add0.json'
+            response = requests.get(
+                f"{url}{chart}?start={start_unix_timestamp}&timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
 
-            spreadsheet_id = '1BMy2N_WZ5ivsY7K_EXbMMJt8lZeUAgtmeIxWcVmZjH8'
+            if response.status_code == 200:
+                date = datetime.fromtimestamp(response.json()["values"][0]["x"]).date().isoformat()
+                value = round(response.json()["values"][0]["y"])
 
-            scope = [
-                'https://www.googleapis.com/auth/spreadsheets',
-                'https://www.googleapis.com/auth/drive'
-            ]
+                credentials_path = '/opt/airflow/creds/btc-network-data-production-6d9e3665add0.json'
 
-            creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
-            client = gspread.authorize(creds)
+                spreadsheet_id = '1BMy2N_WZ5ivsY7K_EXbMMJt8lZeUAgtmeIxWcVmZjH8'
 
-            # Открываем таблицу
-            sheet = client.open_by_key(spreadsheet_id).sheet1
+                scope = [
+                    'https://www.googleapis.com/auth/spreadsheets',
+                    'https://www.googleapis.com/auth/drive'
+                ]
 
-            data = [date, chart, value]
+                charts_value.append(value)
 
-            sheet.append_row(data)
+            else:
+                raise AirflowException(f"Failed to get {chart}. Status code: {response.status_code}")
 
-        else:
-            raise AirflowException(f"Failed to get {chart}. Status code: {response.status_code}")
+        creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
+        client = gspread.authorize(creds)
 
-    extract(URL, 'hash-rate','1', '1')
+        print(charts_value)
+
+        sheet = client.open_by_key(spreadsheet_id).sheet1
+
+        charts_value.insert(0, date)
+        sheet.append_row(charts_value)
+
+    extract(URL,'1', '1')
