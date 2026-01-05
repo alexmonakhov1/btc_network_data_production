@@ -21,7 +21,7 @@ task_list = list()
 
 
 with (DAG(
-    schedule='@weekly',
+    schedule='@daily',
     dag_id="btc_network_data",
     catchup=True,
     start_date=datetime(2025, 10, 2),
@@ -91,6 +91,7 @@ with (DAG(
         final_data.insert(13, round(final_data[11] / charts_value["n-transactions-per-block"]))
         final_data.insert(14, round(final_data[4] / final_data[13], 1))
         final_data.insert(15, round(final_data[13]  * 10 / 144, 2))
+
         sheet.append_row(final_data)
 
     extract(URL,'1', '1')

@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="full tables have data. &#10;Wrong data compare original snapshot">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dags/btc_network_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/dags/btc_network_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
