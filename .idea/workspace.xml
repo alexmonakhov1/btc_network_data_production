@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="its working again!">
+    <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="rewrite to taskflow and separate by function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dags/btc_network_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/dags/btc_network_data.py" afterDir="false" />
     </list>
@@ -45,15 +45,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/alexmonakhov1/pet_projects/btc_network_data_production"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/creds" />
       <recent name="$PROJECT_DIR$" />
@@ -123,7 +127,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767614634081</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="rewrite to taskflow and separate by function">
+      <option name="closed" value="true" />
+      <created>1767684049872</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1767684049872</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -133,6 +145,7 @@
     <MESSAGE value="get hard values and write to sheet" />
     <MESSAGE value="full tables have data. &#10;Wrong data compare original snapshot" />
     <MESSAGE value="its working again!" />
-    <option name="LAST_COMMIT_MESSAGE" value="its working again!" />
+    <MESSAGE value="rewrite to taskflow and separate by function" />
+    <option name="LAST_COMMIT_MESSAGE" value="rewrite to taskflow and separate by function" />
   </component>
 </project>
