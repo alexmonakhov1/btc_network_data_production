@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="full tables have data. &#10;Wrong data compare original snapshot">
+    <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="its working again!">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dags/btc_network_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/dags/btc_network_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -114,7 +115,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767381236877</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="its working again!">
+      <option name="closed" value="true" />
+      <created>1767614634081</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1767614634081</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -123,6 +132,7 @@
     <MESSAGE value="push docker-compose.yaml" />
     <MESSAGE value="get hard values and write to sheet" />
     <MESSAGE value="full tables have data. &#10;Wrong data compare original snapshot" />
-    <option name="LAST_COMMIT_MESSAGE" value="full tables have data. &#10;Wrong data compare original snapshot" />
+    <MESSAGE value="its working again!" />
+    <option name="LAST_COMMIT_MESSAGE" value="its working again!" />
   </component>
 </project>
