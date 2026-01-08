@@ -18,10 +18,10 @@ SCOPE = [
 ]
 
 @dag(
-    schedule='@weekly',
+    schedule='0 8 * * 1',
     catchup=True,
-    start_date=datetime(2025, 10, 1),
-    end_date=datetime(2025, 10, 15),
+    start_date=datetime(2025, 1, 1),
+    # end_date=datetime(2025, 12, 1),
     max_active_runs=1,
     tags=["btc_network_data"]
 )
@@ -36,40 +36,47 @@ def btc_network_data():
 
     @task()
     def do_extract(url: str, timespan: str, rolling_average: str, exists_dates: list, **kwargs):
-        start_unix_timestamp = int((kwargs["data_interval_start"] - timedelta(days=2)).timestamp())
+        start_unix_timestamp = int((kwargs["data_interval_start"] - timedelta(days=float(timespan))).timestamp())
         date_end = (datetime.fromtimestamp(start_unix_timestamp) + timedelta(days=float(timespan))).strftime("%m/%d/%Y")
+
+        print("start_unix_timestamp: ", start_unix_timestamp)
+        print("start_unix_timestamp_DATE: ", datetime.fromtimestamp(start_unix_timestamp).strftime("%m/%d/%Y"))
 
         if date_end in exists_dates:
             raise AirflowSkipException("Такие даты уже есть в датасете")
+
         charts_value = {}
-        for chart in CHARTS:
-            print('LINK: ', f"{url}{chart}?start={start_unix_timestamp}&"
-                            f"timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
-            response = requests.get(
-                f"{url}{chart}?start={start_unix_timestamp}&"
-                f"timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
+
+        responses = [requests.get(f"{url}{chart}?start={start_unix_timestamp}&"
+                f"timespan={timespan}days&rollingAverage={rolling_average}days&format=json") for chart in CHARTS]
+
+        for response in responses:
             if response.status_code == 200:
-                charts_value[f"{chart}"] = response.json()["values"]
+                charts_value[f"{response.json()['name']}"] = response.json()["values"]
             else:
-                raise AirflowException(f"Failed to get {chart}. Status code: {response.status_code}")
+                raise AirflowException(f"Failed to get {response.json()['name']}. Status code: {response.status_code}")
+
         return charts_value
 
     @task()
-    def do_data_for_gspread(dict: dict):
+    def prepare_data_for_gspread(extracted_dict: dict):
         final_data = []
 
-        charts = list(dict.keys())
-        length = len(dict[charts[0]])
+        charts = sorted(list(extracted_dict.keys()))
+        length = len(extracted_dict[charts[0]])
+
+        print("charts: ", charts)
 
         for i in range(length):
             row = []
-            timestamp = datetime.fromtimestamp(dict[charts[0]][i]['x']).strftime("%m/%d/%Y")
+            timestamp = datetime.fromtimestamp(extracted_dict[charts[0]][i]['x']).strftime("%m/%d/%Y")
             row.append(timestamp)
 
             for chart in charts:
-                row.append(dict[chart][i]['y'])
+                row.append(extracted_dict[chart][i]['y'])
 
             final_data.append(row)
+
         return final_data
 
     @task()
@@ -80,7 +87,7 @@ def btc_network_data():
         sheet.append_rows(data)
 
     extract_data = do_extract(URL,'7', '1', check_date())
-    data_for_gspread = do_data_for_gspread(extract_data)
+    data_for_gspread = prepare_data_for_gspread(extract_data)
     write_to_sheet(data_for_gspread)
 
 btc_network_data()
