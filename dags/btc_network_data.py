@@ -1,17 +1,10 @@
 from airflow.sdk import dag, task
-from airflow.providers.standard.operators.python import PythonOperator
 from airflow.exceptions import AirflowSkipException
 from datetime import datetime, timedelta
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from airflow.providers.telegram.operators.telegram import TelegramOperator
 import requests
 from airflow.exceptions import AirflowException
-from airflow import DAG
-from airflow.models.taskinstance import TaskInstance
-from airflow.models.dagrun import DagRun
-import os
-
 
 
 URL = 'https://api.blockchain.info/charts/'
@@ -27,8 +20,8 @@ SCOPE = [
 @dag(
     schedule='@weekly',
     catchup=True,
-    start_date=datetime(2025, 10, 2),
-    end_date=datetime(2025, 11, 3),
+    start_date=datetime(2025, 10, 1),
+    end_date=datetime(2025, 10, 15),
     max_active_runs=1,
     tags=["btc_network_data"]
 )
@@ -37,23 +30,24 @@ def btc_network_data():
     def check_date():
         creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIAL_PATH, SCOPE)
         client = gspread.authorize(creds)
-        sheet = client.open_by_key(SPREADSHEET_ID).worksheet("bitcoin_stats")
+        sheet = client.open_by_key(SPREADSHEET_ID).worksheet("raw_data")
         values_list = sheet.col_values(1)
         return values_list
 
     @task()
     def do_extract(url: str, timespan: str, rolling_average: str, exists_dates: list, **kwargs):
-        start_unix_timestamp = int(
-            (kwargs["data_interval_start"] - timedelta(days=2)).timestamp()
-        )
-        date_end = (datetime.fromtimestamp(1760054400) + timedelta(days=float(timespan))).strftime("%m/%d/%Y")
+        start_unix_timestamp = int((kwargs["data_interval_start"] - timedelta(days=2)).timestamp())
+        date_end = (datetime.fromtimestamp(start_unix_timestamp) + timedelta(days=float(timespan))).strftime("%m/%d/%Y")
+
         if date_end in exists_dates:
             raise AirflowSkipException("Такие даты уже есть в датасете")
         charts_value = {}
         for chart in CHARTS:
-            print('LINK: ', f"{url}{chart}?start={start_unix_timestamp}&timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
+            print('LINK: ', f"{url}{chart}?start={start_unix_timestamp}&"
+                            f"timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
             response = requests.get(
-                f"{url}{chart}?start={start_unix_timestamp}&timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
+                f"{url}{chart}?start={start_unix_timestamp}&"
+                f"timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
             if response.status_code == 200:
                 charts_value[f"{chart}"] = response.json()["values"]
             else:
@@ -73,33 +67,16 @@ def btc_network_data():
             row.append(timestamp)
 
             for chart in charts:
-                if chart == 'n-transactions':
-                    row.append(dict['transaction-fees-usd'][i]['y'] / dict['transaction-fees-usd'][i]['y'])
-                elif chart == 'difficulty':
-                    row.append(dict[chart][i]['y'] / 1000000000000)
-                else:
-                    row.append(dict[chart][i]['y'])
+                row.append(dict[chart][i]['y'])
 
             final_data.append(row)
-
-        # final_data.insert(0, date)
-        # final_data.insert(4, round(charts_value["miners-revenue"] / charts_value["market-price"]))
-        # final_data.insert(9, round(charts_value["transaction-fees-usd"] /
-        #                            (charts_value["miners-revenue"] - charts_value["transaction-fees-usd"]) * 100, 2))
-        # final_data.insert(10, round(charts_value["miners-revenue"] / charts_value["hash-rate"] * 1000))
-        # final_data.insert(11, charts_value["transaction-fees-usd"] /
-        #                   (int(charts_value['transaction-fees-usd']) / int(charts_value['n-transactions'])))
-        # final_data.insert(13, round(final_data[11] / charts_value["n-transactions-per-block"]))
-        # final_data.insert(14, round(final_data[4] / final_data[13], 1))
-        # final_data.insert(15, round(final_data[13] * 10 / 144, 2))
-
         return final_data
 
     @task()
     def write_to_sheet(data: list):
         creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIAL_PATH, SCOPE)
         client = gspread.authorize(creds)
-        sheet = client.open_by_key(SPREADSHEET_ID).worksheet("bitcoin_stats")
+        sheet = client.open_by_key(SPREADSHEET_ID).worksheet("raw_data")
         sheet.append_rows(data)
 
     extract_data = do_extract(URL,'7', '1', check_date())
