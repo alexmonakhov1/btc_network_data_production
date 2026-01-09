@@ -1,6 +1,6 @@
 # Blockchain Network Analytics Pipeline
 
-Automated ETL pipeline for collecting Bitcoin network metrics and visualizing them in interactive dashboards.
+Automated ETL pipeline for collecting Bitcoin network metrics and visualizing them in interactive dashboards
 
 ## Project Goals
 
@@ -30,7 +30,7 @@ API Blockchain.com → Airflow 3 → Google Sheets → Looker Studio dashboard
 ## Roadmap
 
 - [ ] Pandas-based data aggregations
-- [ ] Airflow sensors for event-driven pipeline
+- [ ] Airflow sensors 
 - [ ] Telegram notifications
 
 ---
