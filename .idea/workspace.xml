@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="clear code and logic">
+    <list default="true" id="d8a83daa-039e-40ed-8582-1f5a614d1cde" name="Changes" comment="clear logic">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dags/btc_network_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/dags/btc_network_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,7 +143,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767854929330</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="clear logic">
+      <option name="closed" value="true" />
+      <created>1767871386624</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1767871386624</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -166,6 +174,7 @@
     <MESSAGE value="its working again!" />
     <MESSAGE value="rewrite to taskflow and separate by function" />
     <MESSAGE value="clear code and logic" />
-    <option name="LAST_COMMIT_MESSAGE" value="clear code and logic" />
+    <MESSAGE value="clear logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="clear logic" />
   </component>
 </project>
