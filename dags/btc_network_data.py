@@ -6,6 +6,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import requests
 from airflow.exceptions import AirflowException
 from airflow.sdk import Variable
+from telegram_notification import TelegramNotification
 
 
 URL = Variable.get("url_blockchain")
@@ -14,9 +15,15 @@ SPREADSHEET_ID = Variable.get("spreadsheet_id")
 SCOPE = Variable.get("scope", deserialize_json=True)
 CREDENTIAL_PATH = '/opt/airflow/creds/btc-network-data-production-6d9e3665add0.json'
 
+default_args = {
+    "on_skipped_callback": TelegramNotification.send_message_error,
+    "on_failure_callback": TelegramNotification.send_message_error
+}
+
 @dag(
     schedule='0 8 * * 1',
     catchup=True,
+    default_args=default_args,
     start_date=datetime(2025, 1, 1),
     # end_date=datetime(2025, 12, 1),
     max_active_runs=1,
