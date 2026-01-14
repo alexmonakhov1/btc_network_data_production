@@ -16,7 +16,6 @@ SCOPE = Variable.get("scope", deserialize_json=True)
 CREDENTIAL_PATH = '/opt/airflow/creds/btc-network-data-production-6d9e3665add0.json'
 
 default_args = {
-    "on_skipped_callback": TelegramNotification.send_message_error,
     "on_failure_callback": TelegramNotification.send_message_error
 }
 
