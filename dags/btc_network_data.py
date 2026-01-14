@@ -5,17 +5,14 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import requests
 from airflow.exceptions import AirflowException
+from airflow.sdk import Variable
 
 
-URL = 'https://api.blockchain.info/charts/'
-CHARTS = ['market-price', 'difficulty', 'hash-rate', 'miners-revenue', 'transaction-fees-usd',
-          'transaction-fees', 'n-transactions', 'n-transactions-per-block']
+URL = Variable.get("url_blockchain")
+CHARTS = Variable.get("charts", deserialize_json=True)
+SPREADSHEET_ID = Variable.get("spreadsheet_id")
+SCOPE = Variable.get("scope", deserialize_json=True)
 CREDENTIAL_PATH = '/opt/airflow/creds/btc-network-data-production-6d9e3665add0.json'
-SPREADSHEET_ID = '1BMy2N_WZ5ivsY7K_EXbMMJt8lZeUAgtmeIxWcVmZjH8'
-SCOPE = [
-            'https://www.googleapis.com/auth/spreadsheets',
-            'https://www.googleapis.com/auth/drive'
-]
 
 @dag(
     schedule='0 8 * * 1',
@@ -41,6 +38,10 @@ def btc_network_data():
 
         print("start_unix_timestamp: ", start_unix_timestamp)
         print("start_unix_timestamp_DATE: ", datetime.fromtimestamp(start_unix_timestamp).strftime("%m/%d/%Y"))
+
+        for chart in CHARTS:
+            print(f"{url}{chart}?start={start_unix_timestamp}&"
+                  f"timespan={timespan}days&rollingAverage={rolling_average}days&format=json")
 
         if date_end in exists_dates:
             raise AirflowSkipException("Такие даты уже есть в датасете")
