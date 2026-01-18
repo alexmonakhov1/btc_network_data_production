@@ -13,7 +13,7 @@ URL = Variable.get("url_blockchain")
 CHARTS = Variable.get("charts", deserialize_json=True)
 SPREADSHEET_ID = Variable.get("spreadsheet_id")
 SCOPE = Variable.get("scope", deserialize_json=True)
-CREDENTIAL_PATH = '/opt/airflow/creds/btc-network-data-production-6d9e3665add0.json'
+CREDENTIAL_PATH = Variable.get("path_to_creds")
 
 default_args = {
     "on_failure_callback": TelegramNotification.send_message_error
@@ -23,8 +23,7 @@ default_args = {
     schedule='0 8 * * 1',
     catchup=True,
     default_args=default_args,
-    start_date=datetime(2025, 1, 1),
-    # end_date=datetime(2025, 12, 1),
+    start_date=datetime(2024, 1, 1),
     max_active_runs=1,
     tags=["btc_network_data"]
 )
