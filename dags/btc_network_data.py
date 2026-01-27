@@ -7,6 +7,7 @@ import requests
 from airflow.exceptions import AirflowException
 from airflow.sdk import Variable
 from telegram_notification import TelegramNotification
+import pandas as pd
 
 
 URL = Variable.get("url_blockchain")
@@ -62,26 +63,22 @@ def btc_network_data():
             else:
                 raise AirflowException(f"Failed to get {response.json()['name']}. Status code: {response.status_code}")
 
+        print(charts_value)
+
         return charts_value
 
     @task()
     def prepare_data_for_gspread(extracted_dict: dict):
-        final_data = []
+        df = pd.DataFrame(data=extracted_dict)
 
-        charts = sorted(list(extracted_dict.keys()))
-        length = len(extracted_dict[charts[0]])
-
-        print("charts: ", charts)
-
-        for i in range(length):
-            row = []
-            timestamp = datetime.fromtimestamp(extracted_dict[charts[0]][i]['x']).strftime("%m/%d/%Y")
-            row.append(timestamp)
-
-            for chart in charts:
-                row.append(extracted_dict[chart][i]['y'])
-
-            final_data.append(row)
+        df["date_for_rows"] = df["Market Price (USD)"].apply(lambda x: x["x"])
+        df = df.map(
+            lambda x: x["y"] if isinstance(x, dict) else datetime.fromtimestamp(x).strftime("%m/%d/%Y")
+        )
+        date_col = ["date_for_rows"]
+        other_cols = sorted(c for c in df.columns if c != "date_for_rows")
+        df = df[date_col + other_cols]
+        final_data = df.values.tolist()
 
         return final_data
 
