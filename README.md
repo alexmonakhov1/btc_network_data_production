@@ -29,9 +29,10 @@ API Blockchain.com → Airflow 3 → Google Sheets → Looker Studio dashboard
 
 ## Roadmap
 
-- [x] Pandas-based data aggregations
-- [ ] Airflow sensors 
-- [x] Telegram notifications
+- [ ] Airflow sensors
+- [ ] Improve idempotency
+- [x] ~~Pandas-based data aggregations~~
+- [x] ~~Telegram notifications~~
 
 ---
 
