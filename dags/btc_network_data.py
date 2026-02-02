@@ -65,6 +65,14 @@ def btc_network_data():
 
         print(charts_value)
 
+        max_len_charts_value = max(len(v) for v in charts_value.values())
+        if max_len_charts_value < 8:
+            for k, v in charts_value.items():
+                while len(v) < 7:
+                    last_x = v[-1]['x']
+                    new_x = last_x + 86400
+                    charts_value[k].append({"x": new_x, "y": 0})
+
         return charts_value
 
     @task()
