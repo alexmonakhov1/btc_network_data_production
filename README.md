@@ -29,7 +29,7 @@ API Blockchain.com → Airflow 3 → Google Sheets → Looker Studio dashboard
 
 ## Roadmap
 
-- [ ] Health Check (10 days latency)
+- [ ] Add Health Check (10 days latency)
 - [ ] Improve idempotency
 - [x] ~~Pandas-based data aggregations~~
 - [x] ~~Telegram notifications~~
