@@ -51,4 +51,5 @@ def data_quality_check():
 
     check_data_in_spreadsheet()
 
+
 data_quality_check()
