@@ -21,11 +21,13 @@ default_args = {
     "on_failure_callback": TelegramNotification.send_message_error
 }
 
+DAYS_CHECK = 30
+
 @dag(
     schedule='@daily',
     catchup=True,
     default_args=default_args,
-    start_date=datetime(2026, 2, 18),
+    start_date=datetime(2026, 2, 20),
     max_active_runs=1,
     tags=["data_quality_check"]
 )
@@ -35,8 +37,13 @@ def data_quality_check():
         creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIAL_PATH, SCOPE)
         client = gspread.authorize(creds)
         sheet = client.open_by_key(SPREADSHEET_ID).worksheet("test")
-        values_list = sheet.get("A1:I3")
-        print(values_list)
+
+        last_row = Variable.get("test_last_row")
+        first_row = int(last_row) - DAYS_CHECK
+
+        values_list = sheet.get(f"A{first_row}:I{last_row}")
+        logging.info(values_list)
+
         for row in values_list:
             if "0" in row:
                 logging.info("LIST HAS ZERO!")
@@ -45,7 +52,13 @@ def data_quality_check():
         return False
 
     @task
-    def get_data_from_api() -> dict:
+    def get_data_from_api(flag: bool, url: str, ) -> dict:
+        if not flag:
+            raise AirflowSkipException("All Data is so Good 🤤")
+
+
+
+
         
 
 
