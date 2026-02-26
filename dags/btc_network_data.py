@@ -24,7 +24,7 @@ default_args = {
     schedule='0 8 * * 1',
     catchup=True,
     default_args=default_args,
-    start_date=datetime(2024, 1, 1),
+    start_date=datetime(2026, 2, 16),
     max_active_runs=1,
     tags=["btc_network_data"]
 )

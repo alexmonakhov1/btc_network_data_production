@@ -27,13 +27,13 @@ DAYS_CHECK = 30
     schedule='@daily',
     catchup=True,
     default_args=default_args,
-    start_date=datetime(2026, 2, 20),
+    start_date=datetime(2026, 2, 21),
     max_active_runs=1,
     tags=["data_quality_check"]
 )
 def data_quality_check():
     @task
-    def check_data_in_spreadsheet() -> bool:
+    def check_data_in_spreadsheet() -> str:
         creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIAL_PATH, SCOPE)
         client = gspread.authorize(creds)
         sheet = client.open_by_key(SPREADSHEET_ID).worksheet("test")
@@ -48,13 +48,14 @@ def data_quality_check():
             if "0" in row:
                 logging.info("LIST HAS ZERO!")
                 logging.info("Data will be updated")
-                return True
-        return False
+                return values_list[0][0]
+
+        raise AirflowSkipException("All Data is so Good 🤤")
 
     @task
-    def get_data_from_api(flag: bool, url: str, ) -> dict:
-        if not flag:
-            raise AirflowSkipException("All Data is so Good 🤤")
+    def get_data_from_api(date: str) -> dict:
+
+
 
 
 
