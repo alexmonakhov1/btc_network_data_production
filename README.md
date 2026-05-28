@@ -38,4 +38,4 @@ API Blockchain.com → Airflow 3 → Google Sheets → Looker Studio dashboard
 
 ---
 
-**Status:** 🟢 Active Development
+**Status:** 🟡 Development Paused
